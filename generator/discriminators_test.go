@@ -28,7 +28,7 @@ func TestBuildDiscriminatorMap(t *testing.T) {
 func TestBuildDiscriminatorMap_UsesDiscriminatorValue(t *testing.T) {
 	t.Parallel()
 
-	specDoc, err := loads.Spec("../fixtures/bugs/3133/fixture-3133.yaml")
+	specDoc, err := loads.Spec("../testdata/bugs/3133/fixture-3133.yaml")
 	require.NoError(t, err)
 
 	di := discriminatorInfo(analysis.New(specDoc.Spec()), opts())
@@ -295,7 +295,7 @@ func TestGenerateModel_Discriminator_Billforward(t *testing.T) {
 func TestGenerateModel_DiscriminatorAllOfBaseProperties(t *testing.T) {
 	t.Parallel()
 
-	specDoc, err := loads.Spec("../fixtures/bugs/3133/fixture-3133.yaml")
+	specDoc, err := loads.Spec("../testdata/bugs/3133/fixture-3133.yaml")
 	require.NoError(t, err)
 
 	genOpts := opts()

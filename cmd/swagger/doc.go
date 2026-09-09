@@ -17,8 +17,9 @@ import (
 )
 
 type docCommand struct {
-	Destination string `default:"./docs" description:"Output destination folder" long:"dest" short:"d"`
-	Width       uint16 `default:"132" description:"Desired width in columns of the formatted output" short:"w"`
+	Destination string `default:"./docs"                                                description:"Output destination folder"                        long:"dest"  short:"d"`
+	Width       uint16 `default:"132"                                                   description:"Desired width in columns of the formatted output" long:"width" short:"w"`
+	Include     bool   `description:"Adds a hugo shortcode include line after the help" long:"include-shortcode"                                       short:"i"`
 	parser      *flags.Parser
 }
 
@@ -72,8 +73,11 @@ func (d *docCommand) documentCommand(documented doc) (err error) {
 	fmt.Fprintln(file, "```cmd")
 
 	// go-flags formats a help message by polling the width of the stdin terminal: we give it a pseudo-tty, sized at 132 cols.
-	const defaultTermWidth = 132
-	if d.Width < 80 {
+	const (
+		defaultTermWidth = 132
+		builtinTermWidth = 80
+	)
+	if d.Width < builtinTermWidth {
 		d.Width = defaultTermWidth
 	}
 	restore, err := setTermsize(d.Width)
@@ -95,8 +99,20 @@ func (d *docCommand) documentCommand(documented doc) (err error) {
 	_ = run(d.parser, documented.Args)
 
 	fmt.Fprintln(file, "```")
+	if d.Include {
+		fmt.Fprintln(file, "")
+		stem := fileStem(documented.Target)
+		fmt.Fprintf(file, `{{%% include file="%s_include.md" %%}}`, stem)
+		fmt.Fprintf(file, "\n")
+	}
 
 	return nil
+}
+
+func fileStem(name string) string {
+	ext := filepath.Ext(name)
+
+	return strings.TrimSuffix(name, ext)
 }
 
 type doc struct {
