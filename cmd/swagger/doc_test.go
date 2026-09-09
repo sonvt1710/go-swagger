@@ -10,7 +10,8 @@ import (
 )
 
 func TestDoc(t *testing.T) {
-	parser, err := register()
+	var doc docCommand
+	parser, err := register(&doc)
 	require.NoError(t, err)
 
 	d := &docCommand{

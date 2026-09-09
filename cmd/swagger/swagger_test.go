@@ -16,7 +16,8 @@ func TestSwagger(t *testing.T) {
 		os.Stdout = stdout
 	})
 	os.Stdout = discard(t)
-	parser, err := register()
+	var doc docCommand
+	parser, err := register(&doc)
 	require.NoError(t, err)
 
 	err = run(parser, []string{"--help"})
